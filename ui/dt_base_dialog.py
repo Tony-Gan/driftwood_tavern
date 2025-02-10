@@ -29,7 +29,7 @@ class DTBaseDialog(QDialog, IDTContainer):
         self.init_interface()
         
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
-        self.setFixedWidth(600)
+        self.setFixedWidth(500)
         self.setMaximumHeight(1000)
         self.dialog_type = dialog_type
         self.old_pos = None
@@ -84,6 +84,7 @@ class DTBaseDialog(QDialog, IDTContainer):
 
     def _init_scroll_area(self, layout_type: type[QLayout]):
         self.container = DTBaseScrollArea(parent=self, layout_type=layout_type, auto_adjust_height=True)
+        self.container.setContentsMargins(20, 20, 20, 20)
         self.container.setStyleSheet("""
                     background-color: #FFFFFF;
                     color: black;
@@ -104,7 +105,7 @@ class DTBaseDialog(QDialog, IDTContainer):
                 text, handler = btn_config
                 button = DTStandardButton(
                     text=text,
-                    width=300,
+                    width=250,
                     font=NonSerifBlackLarge,
                     height=60,
                     radius=0

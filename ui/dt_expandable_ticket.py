@@ -2,14 +2,15 @@ from PyQt6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QPushButt
 from PyQt6.QtCore import Qt, pyqtSignal, QPropertyAnimation, QEasingCurve, QTimer
 from PyQt6.QtGui import QPixmap, QColor
 
+from ui.dt_base_frame import DTBaseFrame
 from ui.dt_base_scroll_area import DTBaseScrollArea
 from utils.dt_utils import DTUtils
-from utils.dt_fonts import NonSerifNormal
+from utils.dt_fonts import NonSerifNormal, NonSerifLightSub
 
 class DTExpandableTicket(QWidget):
     expanded_changed = pyqtSignal(bool)
 
-    def __init__(self, text: str = "", parent=None):
+    def __init__(self, text: str = "", sub_text: str = "", parent=None):
         super().__init__(parent)
         self.is_expanded = False
         self.expand_icon = DTUtils.resource_path("resources/icons/expand.png")
@@ -24,7 +25,7 @@ class DTExpandableTicket(QWidget):
         self.header = QPushButton()
         self.header.setFixedHeight(50)
         self.header.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-        self._setup_header(text)
+        self._setup_header(text, sub_text)
         
         self.scroll_area = DTBaseScrollArea(
             self,
@@ -47,19 +48,28 @@ class DTExpandableTicket(QWidget):
 
         QTimer.singleShot(0, self._initial_validate)
 
-    def _setup_header(self, text: str):
+    def _setup_header(self, text: str, sub_text: str):
         layout = QHBoxLayout(self.header)
         layout.setContentsMargins(20, 5, 20, 5)
         layout.setSpacing(15)
+
         
         self.text_label = QLabel(text)
         self.text_label.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
         self.text_label.setFont(NonSerifNormal)
+
+        self.sub_text_label = QLabel(sub_text)
+        self.sub_text_label.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
+        self.sub_text_label.setFont(NonSerifLightSub)
+
+        self.entry = DTBaseFrame(parent=self)
+        self.entry.add_component('title', self.text_label)
+        self.entry.add_component('sub_text', self.sub_text_label)
         
         self.state_icon = QLabel()
         self._update_icon()
         
-        layout.addWidget(self.text_label)
+        layout.addWidget(self.entry)
         layout.addStretch()
         layout.addWidget(self.state_icon)
         

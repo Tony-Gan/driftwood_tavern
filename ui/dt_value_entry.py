@@ -16,6 +16,7 @@ class DTValueEntry(DTBaseFrame):
             label_size: int = 80,
             label_font: QFont = SerifNormal,
             label_alignment: Qt.AlignmentFlag = Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter,
+            editable: bool = True,
             value_text: str = "",
             value_size: int = 80,
             value_font: QFont = SerifLight,
@@ -30,6 +31,7 @@ class DTValueEntry(DTBaseFrame):
         self.label_size = label_size
         self.label_font = label_font
         self.label_alignment = label_alignment
+        self.editable = editable
         self.value_text = value_text
         self.value_size = value_size
         self.value_font = value_font
@@ -53,13 +55,20 @@ class DTValueEntry(DTBaseFrame):
         self.label.setAlignment(self.label_alignment)
         self.label.setStyleSheet("color: #000000;")
 
-        self.entry = DTLineEdit(
-            self.value_size,
-            self.height,
-            self.value_font,
-            self.value_aligment,
-            self
-        )
+        if self.editable:
+            self.entry = DTLineEdit(
+                self.value_size,
+                self.height,
+                self.value_font,
+                self.value_aligment,
+                self
+            )
+        else:
+            self.entry = QLabel(self.value_text)
+            self.entry.setFont(self.value_font)
+            self.entry.setAlignment(self.value_aligment)
+            self.entry.setFixedWidth(self.value_size)
+            self.entry.setFixedHeight(self.height)
 
         self.set_enable(self.enable)
 

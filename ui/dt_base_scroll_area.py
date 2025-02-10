@@ -24,7 +24,8 @@ class DTBaseScrollArea(QScrollArea, IDTContainer):
         self.container.setFrameShape(QFrame.Shape.NoFrame)
         self.main_layout = layout_type(self.container)
         self.main_layout.setAlignment(alignment)
-        self.main_layout.setContentsMargins(0, 0, 0, 0)
+        self.main_layout.setContentsMargins(15, 15, 15, 15)
+        self.main_layout.setSpacing(10)
         self.container.setLayout(self.main_layout)
         self._value_entries = {}
 

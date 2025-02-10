@@ -2,13 +2,11 @@ from PyQt6.QtWidgets import QHBoxLayout, QStackedLayout, QButtonGroup, QLabel
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
 
+from core.dialogs.class_selection import BarbarianSelectionDialog
 from ui.dt_base_button import DTClassButton, DTToggleButton
-from ui.dt_base_dialog import DTBaseDialog
 from ui.dt_base_frame import DTBaseFrame
 from ui.dt_check_entry import DTCheckEntry
-from ui.dt_expandable_ticket import DTExpandableTicket
-from ui.dt_label import DTNormalLabel, DTTitleLabel
-from ui.dt_option_entry import DTOptionEntry
+from ui.dt_label import DTSubLabel, DTTitleLabel
 from ui.dt_stack_widget import DTStackedWidget
 from ui.dt_value_entry import DTValueEntry
 from utils.dt_fonts import TitleChinese, NonSerifNormal, NonSerifLight
@@ -209,7 +207,7 @@ class SettingsFrame(DTBaseFrame):
 
     def _setup_content(self):
         self.label1 = DTTitleLabel(text="基础规则", parent=self)
-        self.text1 = DTNormalLabel(
+        self.text1 = DTSubLabel(
             text="所使用的基础规则，不同版本的基础规则将带来差别很大的构筑体验，如果你不知道你要选择哪个，那么请咨询你的KP，或者选择2014版本", 
             width=600,
             parent=self
@@ -230,7 +228,7 @@ class SettingsFrame(DTBaseFrame):
         self.pbh2024.value_changed.connect(self._on_pbh2024_changed)
 
         self.label2 = DTTitleLabel(text="扩展规则", parent=self)
-        self.text2 = DTNormalLabel(
+        self.text2 = DTSubLabel(
             text="所使用的扩展规则，这些扩展增加了新的职业，子职，法术，物品等；与你的KP交流可以使用的扩展，如果你是D&D新手，建议不要启用扩展", 
             width=600,
             parent=self
@@ -384,7 +382,8 @@ class ClassFrame(DTBaseFrame):
         self.main_layout.addStretch()
 
     def _on_barbarian_clicked(self):
-        print(1)
+        dialog = BarbarianSelectionDialog(self)
+        dialog.exec()
 
     def _on_bard_clicked(self):
         print(1)
