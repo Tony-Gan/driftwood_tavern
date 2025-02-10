@@ -6,7 +6,9 @@ from ui.dt_base_button import DTClassButton, DTToggleButton
 from ui.dt_base_dialog import DTBaseDialog
 from ui.dt_base_frame import DTBaseFrame
 from ui.dt_check_entry import DTCheckEntry
+from ui.dt_expandable_ticket import DTExpandableTicket
 from ui.dt_label import DTNormalLabel, DTTitleLabel
+from ui.dt_option_entry import DTOptionEntry
 from ui.dt_stack_widget import DTStackedWidget
 from ui.dt_value_entry import DTValueEntry
 from utils.dt_fonts import TitleChinese, NonSerifNormal, NonSerifLight
@@ -382,8 +384,7 @@ class ClassFrame(DTBaseFrame):
         self.main_layout.addStretch()
 
     def _on_barbarian_clicked(self):
-        dialog = MyDialog()
-        dialog.exec()
+        print(1)
 
     def _on_bard_clicked(self):
         print(1)
@@ -417,9 +418,3 @@ class ClassFrame(DTBaseFrame):
 
     def _on_wizard_clicked(self):
         print(1)
-
-
-class MyDialog(DTBaseDialog):
-    def __init__(self, parent=None):
-        super().__init__("设置")
-        self.container.add_component('test', QLabel("SSSSS"))

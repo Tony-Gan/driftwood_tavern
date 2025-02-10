@@ -1,10 +1,9 @@
 from typing import Any
 from PyQt6.QtWidgets import QFrame, QScrollArea, QVBoxLayout, QLayout, QSizePolicy
-from PyQt6.QtCore import pyqtSignal, Qt
+from PyQt6.QtCore import pyqtSignal, Qt, QEvent
 
 from ui.dt_option_entry import DTOptionEntry
 from ui.interfaces.idt_container import IDTContainer
-
 
 class DTBaseScrollArea(QScrollArea, IDTContainer):
     values_changed = pyqtSignal(dict)
@@ -51,7 +50,7 @@ class DTBaseScrollArea(QScrollArea, IDTContainer):
         self._setup_content()
 
         if self.auto_adjust_enabled:
-            self.main_layout.layoutChanged.connect(self._update_content_height)
+            self.container.installEventFilter(self)
 
     def _setup_content(self) -> None:
         pass
@@ -60,6 +59,11 @@ class DTBaseScrollArea(QScrollArea, IDTContainer):
         if self.auto_adjust_enabled:
             super().showEvent(event)
             self._update_content_height()
+    
+    def eventFilter(self, obj, event):
+        if obj is self.container and event.type() == QEvent.Type.LayoutRequest:
+            self._update_content_height()
+        return super().eventFilter(obj, event)
 
     def set_auto_adjust(self, enable: bool):
         self.auto_adjust_enabled = enable
@@ -117,5 +121,3 @@ class DTBaseScrollArea(QScrollArea, IDTContainer):
             hint.setHeight(self._content_height + self.frameWidth() * 2)
             return hint
         return super().sizeHint()
-
-    

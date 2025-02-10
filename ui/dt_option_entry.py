@@ -28,7 +28,7 @@ class DTOptionEntry(DTBaseFrame):
             enable: bool = True,
             filter: bool = False,
             layout: QLayout = QHBoxLayout,
-            parent=True
+            parent=None
     ):
         self.label_text = label_text
         self.label_size = label_size
@@ -48,8 +48,14 @@ class DTOptionEntry(DTBaseFrame):
         
         super().__init__(layout_type=layout, parent=parent)
         
+        self._is_valid = bool(self.current_value.strip())
+        
         self.setFixedHeight(height)
         self.setFixedWidth(label_size + spacing + options_size)
+
+    @property
+    def is_valid(self):
+        return self._is_valid
 
     def _setup_content(self):
         self.main_layout.setSpacing(self.spacing)
@@ -75,6 +81,13 @@ class DTOptionEntry(DTBaseFrame):
             else:
                 if self.filter:
                     self.combo.setEditText(self.current_value)
+        else:
+            if self.filter:
+                self.combo.setEditText("")
+            else:
+                if self.combo.findText("") == -1:
+                    self.combo.insertItem(0, "")
+                self.combo.setCurrentIndex(0)
 
         self.combo.currentTextChanged.connect(self._on_option_selected)
         self.combo.currentTextChanged.connect(self._validate_selection)
@@ -94,10 +107,6 @@ class DTOptionEntry(DTBaseFrame):
             self._is_valid = new_valid
             self.validation_changed.emit(new_valid)
         self.value_changed.emit(value)
-
-    @property
-    def is_valid(self):
-        return self._is_valid
 
     def _setup_filter(self):
         self.combo.setEditable(True)

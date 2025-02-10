@@ -1,9 +1,10 @@
 from typing import List
 
-from PyQt6.QtWidgets import QDialog, QLayout, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QFrame
+from PyQt6.QtWidgets import QDialog, QLayout, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QWidget
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtGui import QIcon
 
+from core.dt_application import DTApplication
 from ui.dt_base_button import DTStandardButton
 from ui.dt_base_frame import DTBaseFrame
 from ui.dt_base_scroll_area import DTBaseScrollArea
@@ -25,25 +26,28 @@ class DTBaseDialog(QDialog, IDTContainer):
             parent=None
         ):
         super().__init__(parent)
+        self.init_interface()
+        
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
         self.setFixedWidth(600)
         self.setMaximumHeight(1000)
-
         self.dialog_type = dialog_type
+        self.old_pos = None
+        self.mask = None
         
         self._init_title_bar(title)
         self._init_scroll_area(layout_type)
         self._init_button_bar(button1, button2)
         
-        main_layout = QVBoxLayout(self)
-        main_layout.setContentsMargins(0, 0, 0, 0)
-        main_layout.setSpacing(0)
+        self.main_layout = QVBoxLayout(self)
+        self.main_layout.setContentsMargins(0, 0, 0, 0)
+        self.main_layout.setSpacing(0)
         
-        main_layout.addWidget(self.title_bar, stretch=1)
-        main_layout.addWidget(self.container, stretch=5)
-        main_layout.addWidget(self.button_bar, stretch=1)
+        self.main_layout.addWidget(self.title_bar)
+        self.main_layout.addWidget(self.container)
+        self.main_layout.addWidget(self.button_bar)
         
-        self.setLayout(main_layout)
+        self.setLayout(self.main_layout)
 
     def _init_title_bar(self, title: str):
         self.title_bar = DTBaseFrame(layout_type=QHBoxLayout, parent=self)
@@ -79,11 +83,13 @@ class DTBaseDialog(QDialog, IDTContainer):
         self.title_bar.add_component('btn', btn_close)
 
     def _init_scroll_area(self, layout_type: type[QLayout]):
-        self.container = DTBaseScrollArea(parent=self, layout_type=layout_type)
+        self.container = DTBaseScrollArea(parent=self, layout_type=layout_type, auto_adjust_height=True)
         self.container.setStyleSheet("""
-                background-color: #FFFFFF;
-                color: black;
-            """)
+                    background-color: #FFFFFF;
+                    color: black;
+                """)
+        self.container.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.container.setMaximumHeight(800)
 
     def _init_button_bar(self, button1: List, button2: List):
         self.button_bar = DTBaseFrame(layout_type=QHBoxLayout, parent=self)
@@ -106,7 +112,53 @@ class DTBaseDialog(QDialog, IDTContainer):
                 button.clicked.connect(handler)
                 self.button_bar.add_component('btn', button)
 
+    def add_component(self, name, component):
+        self.container.add_component(name, component)
+    
+    def add_child(self, name, child, alignment = None):
+        self.container.add_child(name, child)
+        
+    def mousePressEvent(self, event):
+        if event.button() == Qt.MouseButton.LeftButton:
+            self.old_pos = event.globalPosition().toPoint()
+        super().mousePressEvent(event)
+
+    def mouseMoveEvent(self, event):
+        if self.old_pos and (event.buttons() & Qt.MouseButton.LeftButton):
+            delta = event.globalPosition().toPoint() - self.old_pos
+            self.move(self.pos() + delta)
+            self.old_pos = event.globalPosition().toPoint()
+        super().mouseMoveEvent(event)
+
+    def mouseReleaseEvent(self, event):
+        self.old_pos = None
+        super().mouseReleaseEvent(event)
+
+    def showEvent(self, event):
+        super().showEvent(event)
+        parent = self.parent() or DTApplication.activeWindow()
+        if parent:
+            self.mask = QWidget(parent)
+            self.mask.setStyleSheet("background-color: rgba(128, 128, 128, 0.5);")
+            self.mask.setGeometry(parent.rect())
+            self.mask.show()
+            self.raise_()
+
+    def cleanup_mask(self):
+        if self.mask:
+            self.mask.hide()
+            self.mask.deleteLater()
+            self.mask = None
+
+    def accept(self):
+        self.cleanup_mask()
+        super().accept()
+
+    def reject(self):
+        self.cleanup_mask()
+        super().reject()
+
     def closeEvent(self, event):
+        self.cleanup_mask()
         self.closed.emit()
         super().closeEvent(event)
-        
