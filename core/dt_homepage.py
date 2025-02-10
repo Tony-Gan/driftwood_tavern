@@ -37,7 +37,7 @@ class ButtonsFrame(DTBaseFrame):
 
         button1 = DTStandardButton(
             f'创建角色', 
-            icon_path=DTUtils.resource_path('resources/icons/app.png'),
+            icon_path=DTUtils.resource_path('resources/icons/tavern.png'),
             width=300,
             height=80,
             radius=10,
@@ -49,7 +49,7 @@ class ButtonsFrame(DTBaseFrame):
 
         button2 = DTStandardButton(
             f'管理角色', 
-            icon_path=DTUtils.resource_path('resources/icons/app.png'),
+            icon_path=DTUtils.resource_path('resources/icons/character.png'),
             width=300,
             height=80,
             radius=10,
@@ -61,7 +61,7 @@ class ButtonsFrame(DTBaseFrame):
 
         button3 = DTWarningButton(
             f'离开酒馆', 
-            icon_path=DTUtils.resource_path('resources/icons/app.png'),
+            icon_path=DTUtils.resource_path('resources/icons/exit.png'),
             width=300,
             height=80,
             radius=10,
