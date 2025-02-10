@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QLayout, QHBoxLayout, QLabel, QSizePolicy
+from PyQt6.QtWidgets import QLayout, QHBoxLayout, QLabel
 from PyQt6.QtCore import pyqtSignal, Qt
 from PyQt6.QtGui import QFont
 
