@@ -63,6 +63,7 @@ class DTExpandableTicket(QWidget):
         self.sub_text_label.setFont(NonSerifLightSub)
 
         self.entry = DTBaseFrame(parent=self)
+        self.entry.setStyleSheet("background-color: transparent;")
         self.entry.add_component('title', self.text_label)
         self.entry.add_component('sub_text', self.sub_text_label)
         
@@ -97,31 +98,39 @@ class DTExpandableTicket(QWidget):
     def _setup_style(self):
         self.header.setStyleSheet("""
             QPushButton {
-                background-color: #FFFFFF;
-                border: 1px solid #CCCCCC;
-                border-bottom: none;
+                background-color: #F0F0F0;
+                border: none;
             }
         """)
         self.text_label.setStyleSheet("""
             QLabel {
                 font-size: 14px; 
                 color: #333333;
+                background-color: #F0F0F0;
             }
         """)
+        self.sub_text_label.setStyleSheet("""
+            QLabel {
+                font-size: 12px; 
+                color: #666666;
+                background-color: #F0F0F0;
+            }
+        """)
+        self.state_icon.setStyleSheet("background-color: transparent;")
 
     def _setup_validation_style(self):
         self._valid_style = """
             QPushButton {
-                background-color: #F8FFF8;
-                border: 2px solid #4CAF50;
-                border-bottom: none;
+                background-color: #F0F0F0;
+                border: none;
             }
         """
         self._invalid_style = """
             QPushButton {
-                background-color: #FFF8F8;
-                border: 2px solid blue;
-                border-radius: 5px;
+                background-color: #F0F0F0;
+                border-top: 1px solid #FF5252;
+                border-right: none;
+                border-left: none;
                 border-bottom: none;
             }
         """
@@ -144,15 +153,10 @@ class DTExpandableTicket(QWidget):
         return valid
 
     def _update_validation_style(self, is_valid: bool):
-        if not self.is_expanded:
-            border_color = "#4CAF50" if is_valid else "#FF5252"
-            self.header.setStyleSheet(f"""
-                QPushButton {{
-                    border: 2px solid {border_color};
-                }}
-            """)
+        if is_valid:
+            self.header.setStyleSheet(self._valid_style)
         else:
-            self.header.setStyleSheet(self._normal_style)
+            self.header.setStyleSheet(self._invalid_style)
 
     def _adjust_scroll_height(self, content_height: int):
         if self.is_expanded:
@@ -164,10 +168,7 @@ class DTExpandableTicket(QWidget):
 
     def toggle_expansion(self):
         self.is_expanded = not self.is_expanded
-        if self.is_expanded:
-            self.header.setStyleSheet(self._normal_style)
-        else:
-            self._update_validation_style(self._get_option_entries_validity())
+        self._update_validation_style(self._get_option_entries_validity())
         self._update_icon()
         self._animate_expansion()
         self.expanded_changed.emit(self.is_expanded)

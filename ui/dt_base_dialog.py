@@ -19,6 +19,7 @@ class DTBaseDialog(QDialog, IDTContainer):
     def __init__(
             self, 
             title: str, 
+            window_title: str = "",
             layout_type: type[QLayout] = QVBoxLayout,
             button1: List = None,
             button2: List = None,
@@ -27,6 +28,8 @@ class DTBaseDialog(QDialog, IDTContainer):
         ):
         super().__init__(parent)
         self.init_interface()
+
+        self.setWindowTitle(window_title)
         
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
         self.setFixedWidth(500)

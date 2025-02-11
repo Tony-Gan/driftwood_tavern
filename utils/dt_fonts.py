@@ -18,6 +18,9 @@ SerifMediumLarge.setPointSize(13)
 NonSerifNormal = QFont("Noto Sans SC")
 NonSerifNormal.setPointSize(11)
 
+NonSerifNormalSmall = QFont("Noto Sans SC")
+NonSerifNormalSmall.setPointSize(10)
+
 NonSerifMedium = QFont("Noto Sans SC Medium")
 NonSerifMedium.setPointSize(11)
 

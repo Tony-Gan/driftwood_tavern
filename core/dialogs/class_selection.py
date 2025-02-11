@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QHBoxLayout, QLabel
+from PyQt6.QtWidgets import QHBoxLayout, QLabel, QTextBrowser, QSizePolicy
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtCore import Qt
 
@@ -8,13 +8,13 @@ from ui.dt_expandable_ticket import DTExpandableTicket
 from ui.dt_label import DTNormalLabel, DTSubLabel, DTTitleLabel
 from ui.dt_value_entry import DTValueEntry
 from utils.dt_utils import DTUtils
-from utils.dt_fonts import NonSerifNormal, NonSerifLight
+from utils.dt_fonts import NonSerifNormal, NonSerifLight, NonSerifNormalSmall
 
 
 
 class BarbarianSelectionDialog(DTBaseDialog):
     def __init__(self, parent=None):
-        super().__init__("野蛮人")
+        super().__init__("野蛮人", window_title="野蛮人")
 
         icon_path = DTUtils.resource_path('resources/icons/barbarian.jpeg')
         title_frame = ClassSelectionTitleFrame(
@@ -122,7 +122,7 @@ class ClassSelectionTitleFrame(DTBaseFrame):
         )
 
         self.weapon_entry = DTValueEntry(
-            label_text="技能熟练",
+            label_text="武器精通",
             label_size=80,
             label_font=NonSerifNormal,
             editable=False,
@@ -133,7 +133,7 @@ class ClassSelectionTitleFrame(DTBaseFrame):
         )
 
         self.armour_entry = DTValueEntry(
-            label_text="技能熟练",
+            label_text="护甲熟练",
             label_size=80,
             label_font=NonSerifNormal,
             editable=False,
@@ -212,4 +212,24 @@ class AbilityFrame(DTBaseFrame):
                     f"等级{level}",
                     self
                 )
+                ticket.scroll_area.main_layout.setSpacing(2)
                 self.add_component('component', ticket)
+
+                for line in ability["描述"]:
+                    doc = QTextBrowser()
+                    doc.setFrameStyle(0)
+                    doc.setMarkdown(line.strip())
+                    doc.setFont(NonSerifNormalSmall)
+                    doc.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+                    doc.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+                    
+                    doc.setSizePolicy(
+                        QSizePolicy.Policy.Expanding,
+                        QSizePolicy.Policy.Fixed
+                    )
+                    doc.document().documentLayout().documentSizeChanged.connect(
+                        lambda _, d=doc: d.setFixedHeight(int(d.document().size().height()))
+                    )
+                    doc.setFixedHeight(int(doc.document().size().height()))
+
+                    ticket.add_component(doc)

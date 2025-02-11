@@ -3,6 +3,7 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
 
 from core.dialogs.class_selection import BarbarianSelectionDialog
+from models.character import Character
 from ui.dt_base_button import DTClassButton, DTToggleButton
 from ui.dt_base_frame import DTBaseFrame
 from ui.dt_check_entry import DTCheckEntry
@@ -15,7 +16,7 @@ from utils.dt_utils import DTUtils
 
 class DTCharacterBuilder(DTBaseFrame):
     def __init__(self, parent):
-        self.p_data = {}
+        self.p_data = Character()
         super().__init__(parent=parent)
 
     def _setup_content(self):

@@ -23,12 +23,10 @@ class DTUtils:
         for level, features in data.items():
             organized[level] = []
             for feature in features:
-                description = "\n".join(feature["description"])
-                
                 organized[level].append({
                     "中文名称": feature["c_name"],
                     "英文名称": feature["e_name"],
-                    "描述": description,
+                    "描述": feature["description"],
                     "来源": feature["source"],
                     "子职": "无" if not feature["subclass"] else feature["subclass"],
                     "显示类型": feature["display"]
