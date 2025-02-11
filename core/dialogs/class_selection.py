@@ -41,19 +41,6 @@ class BarbarianSelectionDialog(DTBaseDialog):
         self.add_child('title', title_frame)
         self.add_child('ability', ability_frame)
 
-        data = DTUtils.read_class_features('barbarian')
-
-        for level, contents in data.items():
-            for ability in contents:
-                if ability['子职'] != '无':
-                    continue
-                ticket = DTExpandableTicket(
-                    ability["中文名称"],
-                    f"等级{level}",
-                    self
-                )
-                self.add_component('test', ticket)
-
         
 class ClassSelectionTitleFrame(DTBaseFrame):
     def __init__(
@@ -210,8 +197,19 @@ class AbilityFrame(DTBaseFrame):
     ):
         self.cl = cl
 
-        super().__init__(parent=parent, layout_type=QHBoxLayout)
+        super().__init__(parent=parent)
 
     def _setup_content(self):
         if self.cl == "barbarian":
-            pass
+            data = DTUtils.read_class_features('barbarian')
+
+        for level, contents in data.items():
+            for ability in contents:
+                if ability['子职'] != '无':
+                    continue
+                ticket = DTExpandableTicket(
+                    ability["中文名称"],
+                    f"等级{level}",
+                    self
+                )
+                self.add_component('component', ticket)

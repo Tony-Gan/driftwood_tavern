@@ -35,3 +35,16 @@ class DTUtils:
                 })
 
         return organized
+    
+    @staticmethod
+    def read_class_subclass(cl):
+        path = DTUtils.resource_path('resources/data/class_subclass.json')
+        with open(path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        data = data[cl]
+
+        organized = {}
+        for name, source in data.items():
+            organized[name] = source
+
+        return organized
