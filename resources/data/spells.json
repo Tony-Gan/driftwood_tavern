@@ -5,6 +5,7 @@
         "school": "",
         "level": "",
         "concentration": false,
+        "ritual": false,
         "description": "",
         "tags": [],
         "source": ""

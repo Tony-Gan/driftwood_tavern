@@ -14,9 +14,10 @@ from utils.dt_fonts import NonSerifNormal, NonSerifLight, NonSerifNormalSmall
 
 class BarbarianSelectionDialog(DTBaseDialog):
     def __init__(self, parent=None):
-        super().__init__("野蛮人", window_title="野蛮人")
-
         icon_path = DTUtils.resource_path('resources/icons/barbarian.jpeg')
+        super().__init__("野蛮人", window_title="野蛮人", window_icon=icon_path)
+
+        self.data = None
         title_frame = ClassSelectionTitleFrame(
             parent=self,
             title="野蛮人 Barbarian",
@@ -40,6 +41,13 @@ class BarbarianSelectionDialog(DTBaseDialog):
 
         self.add_child('title', title_frame)
         self.add_child('ability', ability_frame)
+
+        self.moveup(300)
+
+    def get_values(self) -> dict:
+        base_values = super().get_values()
+        base_values['data'] = self.data
+        return base_values
 
         
 class ClassSelectionTitleFrame(DTBaseFrame):
@@ -202,6 +210,7 @@ class AbilityFrame(DTBaseFrame):
     def _setup_content(self):
         if self.cl == "barbarian":
             data = DTUtils.read_class_features('barbarian')
+            self.parent.data = data
 
         for level, contents in data.items():
             for ability in contents:

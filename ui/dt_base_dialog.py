@@ -1,4 +1,4 @@
-from typing import List
+from typing import Any, List, Tuple
 
 from PyQt6.QtWidgets import QDialog, QLayout, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QWidget
 from PyQt6.QtCore import Qt, pyqtSignal
@@ -20,6 +20,7 @@ class DTBaseDialog(QDialog, IDTContainer):
             self, 
             title: str, 
             window_title: str = "",
+            window_icon: str = None,
             layout_type: type[QLayout] = QVBoxLayout,
             button1: List = None,
             button2: List = None,
@@ -30,6 +31,8 @@ class DTBaseDialog(QDialog, IDTContainer):
         self.init_interface()
 
         self.setWindowTitle(window_title)
+        if window_icon:
+            self.setWindowIcon(QIcon(window_icon))
         
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
         self.setFixedWidth(500)
@@ -100,8 +103,8 @@ class DTBaseDialog(QDialog, IDTContainer):
         self.button_bar.setFixedHeight(60)
     
         if not button1 and not button2:
-            button1 = ["OK", self.accept]
-            button2 = ["Cancel", self.reject]
+            button1 = ["确认", self._on_ok_clicked]
+            button2 = ["取消", self.reject]
         
         for btn_config in [button1, button2]:
             if btn_config:
@@ -115,6 +118,10 @@ class DTBaseDialog(QDialog, IDTContainer):
                 )
                 button.clicked.connect(handler)
                 self.button_bar.add_component('btn', button)
+
+    def _on_ok_clicked(self) -> None:
+        self._result = self.get_values()
+        self.accept()
 
     def add_component(self, name, component):
         self.container.add_component(name, component)
@@ -166,3 +173,18 @@ class DTBaseDialog(QDialog, IDTContainer):
         self.cleanup_mask()
         self.closed.emit()
         super().closeEvent(event)
+
+    def get_result(self) -> Any:
+        return self._result
+    
+    def moveup(self, offset: int):
+        current_pos = self.pos()
+        new_y = current_pos.y() - offset
+        self.move(current_pos.x(), new_y)
+
+    @classmethod
+    def get_input(cls, parent=None, **kwargs) -> Tuple[bool, Any]:
+        dialog = cls(parent=parent, **kwargs)
+        if dialog.exec() == QDialog.DialogCode.Accepted:
+            return True, dialog.get_result()
+        return False, None
